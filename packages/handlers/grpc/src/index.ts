@@ -40,6 +40,7 @@ import { readFileOrUrl } from '@graphql-mesh/utils';
 import { getDirective, getDirectives, getRootTypes } from '@graphql-tools/utils';
 import { ChannelCredentials, credentials, loadPackageDefinition } from '@grpc/grpc-js';
 import { ServiceClient } from '@grpc/grpc-js/build/src/make-client.js';
+import { ChannelOptions } from '@grpc/grpc-js/build/src/channel-options.js';
 import { fromJSON } from '@grpc/proto-loader';
 import {
   grpcConnectivityStateDirective,
@@ -309,6 +310,10 @@ export default class GrpcHandler implements MeshHandler {
       this.grpcObjectByserviceClientByObjPath.set(grpcObject, serviceClientByObjPath);
     }
     let client: ServiceClient = serviceClientByObjPath.get(objPath);
+    const options: ChannelOptions = {};
+    options['grpc.max_send_message_length'] = this.config.maxSendMessageLength? this.config.maxSendMessageLength: -1
+    options['grpc.max_receive_message_length'] = this.config.maxReceiveMessageLength? this.config.maxReceiveMessageLength: -1
+
     if (!client) {
       const ServiceClient = lodashGet(grpcObject, objPath);
       if (typeof ServiceClient !== 'function') {
@@ -318,6 +323,7 @@ export default class GrpcHandler implements MeshHandler {
         stringInterpolator.parse(this.config.endpoint, { env: process.env }) ??
           this.config.endpoint,
         creds,
+        options
       );
       const subId = this.pubsub.subscribe('destroy', () => {
         client.close();

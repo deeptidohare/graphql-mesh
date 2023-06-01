@@ -309,6 +309,8 @@ export interface GrpcHandler {
   schemaHeaders?: {
     [k: string]: any;
   };
+  maxSendMessageLength?: number;
+  maxReceiveMessageLength?: number;
 }
 export interface ProtoFilePath {
   file: string;

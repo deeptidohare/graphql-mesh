@@ -39,6 +39,16 @@ type GrpcHandler @md {
   prefixQueryMethod: [String]
 
   schemaHeaders: JSON
+
+  """
+  max length Send message limit
+  """
+  maxSendMessageLength: Int
+
+  """
+  max length receive message limit
+  """
+  maxReceiveMessageLength: Int
 }
 
 type LoadOptions {
